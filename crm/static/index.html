@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample CRM &amp; Ticketing System</title>
+<style>
+  :root {
+    --accent: #D9480F;
+    --ok: #1B7F4D;
+    --warn: #B4680A;
+    --bad: #C22B2B;
+    --ink: #1B1F27;
+    --ink-muted: #6B7280;
+    --line: #E3E5E9;
+    --bg: #F4F5F7;
+    --panel: #FFFFFF;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+  }
+  header {
+    background: var(--panel);
+    border-bottom: 3px solid var(--accent);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-size: 17px;
+    margin: 0;
+  }
+  header .sub {
+    color: var(--ink-muted);
+    font-size: 12.5px;
+    margin-top: 2px;
+  }
+  .live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: var(--ink-muted);
+  }
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ok);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  main {
+    padding: 24px 28px 60px;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .kpi .n { font-size: 24px; font-weight: 700; }
+  .kpi .l { color: var(--ink-muted); font-size: 12px; margin-top: 2px; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 22px;
+  }
+  section > h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ink-muted);
+    padding: 14px 18px;
+    margin: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  table { width: 100%; border-collapse: collapse; }
+  th, td {
+    text-align: left;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  th { color: var(--ink-muted); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: none; }
+  td.mono, span.mono { font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 12.5px; }
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .badge-open { background: #FFF1E6; color: var(--warn); }
+  .badge-closed { background: #E8F6EE; color: var(--ok); }
+  .badge-pending { background: #EEF0F3; color: var(--ink-muted); }
+  .badge-in_progress { background: #FFF1E6; color: var(--warn); }
+  .badge-resolved { background: #E8F6EE; color: var(--ok); }
+  .badge-escalated { background: #FDEBEB; color: var(--bad); }
+  .cols-2 {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 22px;
+    align-items: start;
+  }
+  .comms-list { padding: 6px 18px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .comms-item { padding: 10px 12px; background: var(--bg); border-radius: 6px; border: 1px solid var(--line); }
+  .comms-meta { font-size: 11.5px; color: var(--ink-muted); margin-bottom: 4px; display: flex; gap: 8px; align-items: center; }
+  .comms-msg { font-size: 13px; }
+  .empty { padding: 22px 18px; color: var(--ink-muted); font-size: 13px; }
+  footer {
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 12px;
+    padding: 10px 0 30px;
+  }
+  footer a { color: var(--accent); }
+  @media (max-width: 900px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .cols-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Sample CRM &amp; Ticketing System</h1>
+      <div class="sub">Internal back-office view &middot; independent service on this port</div>
+    </div>
+    <div class="live"><span class="live-dot"></span><span id="updated">connecting&hellip;</span></div>
+  </header>
+
+  <main>
+    <div class="kpis">
+      <div class="kpi"><div class="n" id="kpi-open">&ndash;</div><div class="l">Open cases</div></div>
+      <div class="kpi"><div class="n" id="kpi-closed">&ndash;</div><div class="l">Resolved &amp; closed</div></div>
+      <div class="kpi"><div class="n" id="kpi-escalated">&ndash;</div><div class="l">Escalated tickets</div></div>
+      <div class="kpi"><div class="n" id="kpi-comms">&ndash;</div><div class="l">Customer messages sent</div></div>
+    </div>
+
+    <section>
+      <h2>Cases</h2>
+      <table>
+        <thead>
+          <tr><th>Case</th><th>Customer</th><th>Summary</th><th>Priority</th><th>Status</th><th>Ticket</th><th>Notes</th></tr>
+        </thead>
+        <tbody id="cases-body"></tbody>
+      </table>
+      <div class="empty" id="cases-empty" style="display:none">No cases yet. They'll appear here the moment the follow-up agent opens one.</div>
+    </section>
+
+    <div class="cols-2">
+      <section>
+        <h2>Backend tickets</h2>
+        <table>
+          <thead><tr><th>Ticket</th><th>Case</th><th>Status</th><th>Priority</th></tr></thead>
+          <tbody id="tickets-body"></tbody>
+        </table>
+        <div class="empty" id="tickets-empty" style="display:none">No tickets opened yet.</div>
+      </section>
+
+      <section>
+        <h2>Customer communications log</h2>
+        <div class="comms-list" id="comms-list"></div>
+        <div class="empty" id="comms-empty" style="display:none">No messages sent to customers yet.</div>
+      </section>
+    </div>
+
+    <footer>
+      This page polls this service's own REST API every 2s - the same API the autonomous agents call.
+      Raw endpoints: <a href="/docs">/docs</a> &middot; <a href="/cases">/cases</a> &middot; <a href="/communications">/communications</a>
+    </footer>
+  </main>
+
+<script>
+const statusBadge = (s) => `<span class="badge badge-${s}">${s.replace('_',' ')}</span>`;
+
+async function getJSON(path) {
+  const r = await fetch(path);
+  if (!r.ok) throw new Error(path + ': ' + r.status);
+  return r.json();
+}
+
+async function refresh() {
+  try {
+    const [customers, cases, communications] = await Promise.all([
+      getJSON('/customers'), getJSON('/cases'), getJSON('/communications'),
+    ]);
+    const customerById = {};
+    customers.forEach((c) => customerById[c.customer_id] = c);
+
+    const ticketIds = cases.filter((c) => c.ticket_id).map((c) => c.ticket_id);
+    const tickets = await Promise.all(ticketIds.map((id) => getJSON('/tickets/' + id)));
+    const ticketById = {};
+    tickets.forEach((t) => ticketById[t.ticket_id] = t);
+
+    // KPIs
+    document.getElementById('kpi-open').textContent = cases.filter((c) => c.status === 'open').length;
+    document.getElementById('kpi-closed').textContent = cases.filter((c) => c.status === 'closed').length;
+    document.getElementById('kpi-escalated').textContent = tickets.filter((t) => t.escalated).length;
+    document.getElementById('kpi-comms').textContent = communications.length;
+
+    // Cases table
+    const casesBody = document.getElementById('cases-body');
+    casesBody.innerHTML = cases.map((c) => {
+      const customer = customerById[c.customer_id];
+      const ticket = c.ticket_id ? ticketById[c.ticket_id] : null;
+      const ticketCell = ticket
+        ? `<span class="mono">${ticket.ticket_id}</span> ${statusBadge(ticket.status)}${ticket.escalated ? ' ' + statusBadge('escalated') : ''}`
+        : '<span style="color:var(--ink-muted)">none yet</span>';
+      return `<tr>
+        <td class="mono">${c.case_id}</td>
+        <td>${customer ? customer.name : c.customer_id}</td>
+        <td>${c.summary}</td>
+        <td>${c.priority}</td>
+        <td>${statusBadge(c.status === 'closed' ? 'closed' : 'open')}</td>
+        <td>${ticketCell}</td>
+        <td>${c.notes.length}</td>
+      </tr>`;
+    }).join('');
+    document.getElementById('cases-empty').style.display = cases.length ? 'none' : 'block';
+
+    // Tickets table
+    const ticketsBody = document.getElementById('tickets-body');
+    ticketsBody.innerHTML = tickets.map((t) => `<tr>
+        <td class="mono">${t.ticket_id}</td>
+        <td class="mono">${t.case_id}</td>
+        <td>${statusBadge(t.status)}${t.escalated ? ' ' + statusBadge('escalated') : ''}</td>
+        <td>${t.priority}</td>
+      </tr>`).join('');
+    document.getElementById('tickets-empty').style.display = tickets.length ? 'none' : 'block';
+
+    // Communications
+    const commsList = document.getElementById('comms-list');
+    commsList.innerHTML = communications.slice().reverse().map((m) => {
+      const customer = customerById[m.customer_id];
+      return `<div class="comms-item">
+        <div class="comms-meta">
+          <span class="mono">day ${m.tick}</span>
+          <strong>${customer ? customer.name : m.customer_id}</strong>
+          ${statusBadge(m.update_type === 'final' ? 'resolved' : 'pending')}
+        </div>
+        <div class="comms-msg">${m.message}</div>
+      </div>`;
+    }).join('');
+    document.getElementById('comms-empty').style.display = communications.length ? 'none' : 'block';
+
+    document.getElementById('updated').textContent = 'live \u00b7 updated ' + new Date().toLocaleTimeString();
+  } catch (e) {
+    document.getElementById('updated').textContent = 'connection lost - retrying\u2026';
+  }
+}
+
+refresh();
+setInterval(refresh, 2000);
+</script>
+</body>
+</html>

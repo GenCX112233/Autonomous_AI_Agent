@@ -1,0 +1,13 @@
+# Core
+python-dotenv>=1.0.0
+
+# LLM SDKs - only the one you configure via LLM_PROVIDER actually gets called,
+# but both are listed so the "configurable LLM" switch works out of the box.
+anthropic>=0.40.0
+openai>=1.50.0
+
+# Sample CRM application (Use Case 2)
+fastapi>=0.115.0
+uvicorn>=0.30.0
+requests>=2.31.0
+pydantic>=2.8.0
